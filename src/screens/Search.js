@@ -16,11 +16,12 @@ const Search = ({setSearch, search}) => {
     setSearch(!search);
   };
   const handleChange = value => {
-    setText(value);
+    setText(value)
     setIcon(require('../assets/images/icon_clear.png'));
   };
   const handleClear = () => {
-    setText(); 
+    setText();
+ 
   };
 
   return (
