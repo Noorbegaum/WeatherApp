@@ -6,19 +6,28 @@ import {
   SafeAreaView,
   Pressable,
   Image,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import NoFav from '../components/NoFav';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import CityList from '../components/CityList';
 
 const image = require('../assets/images/background.png');
 
-const Favourites = ({navigation}) => {
-
-    const handleBack=()=>{
-        navigation.goBack('HomeScreen')
-    }
+const Favourites = ({navigation}, props) => {
+  const [remove, setRemove] = useState(false);
+  const handleBack = () => {
+    navigation.goBack('HomeScreen');
+  };
+  const createTwoButtonAlert = () =>
+    Alert.alert('', 'Are you sure want to remove all the favourites?', [
+      {
+        text: 'NO',
+        onPress: () => console.log('No Pressed'),
+      },
+      {text: 'YES', onPress: () => setRemove(!remove)},
+    ]);
 
   return (
     <View style={styles.container}>
@@ -41,16 +50,25 @@ const Favourites = ({navigation}) => {
                 <Image
                   source={require('../assets/images/search.png')}
                   style={styles.searchButton}
-                  tintcolor='black'
+                  tintcolor="black"
                 />
               </Pressable>
             </View>
           </View>
-
-          {/* <NoFav type='Favourites Added'/>*/}
-         <CityList/>
-          {/*  */}
-
+          {!remove ? (
+            <>
+            <View style={styles.content}>
+              <Text style={styles.addedText}>6 City added as favourite</Text>
+              <TouchableOpacity onPress={createTwoButtonAlert}>
+                <Text style={styles.removeAll}>Remove All</Text>
+              </TouchableOpacity>
+            </View>
+            <CityList />
+          </>
+           
+          ) : (
+            <NoFav type="Favourites Added" />
+          )}
         </SafeAreaView>
       </ImageBackground>
     </View>
@@ -102,6 +120,27 @@ const styles = StyleSheet.create({
   searchButton: {
     height: 17.49,
     width: 17.49,
-    tintColor: "#000000",
+    tintColor: '#000000',
+  },
+  content: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+  },
+  addedText: {
+    height: 15,
+    color: '#FFFFFF',
+    fontSize: 13,
+    letterSpacing: 0,
+    lineHeight: 15,
+  },
+  removeAll: {
+    height: 15,
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '500',
+    letterSpacing: 0,
+    lineHeight: 15,
   },
 });

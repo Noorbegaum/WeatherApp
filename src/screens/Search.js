@@ -1,17 +1,26 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
-  ImageBackground,
   SafeAreaView,
   Pressable,
   Image,
+  TextInput,
 } from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const Search = ({navigation}) => {
+const Search = ({setSearch, search}) => {
+  const [icon, setIcon] = useState(null);
+  const [text, setText] = useState();
   const handleBack = () => {
-    navigation.navigate('HomeScreen');
+    setSearch(!search);
+  };
+  const handleChange = value => {
+    setText(value);
+    setIcon(require('../assets/images/icon_clear.png'));
+  };
+  const handleClear = () => {
+    setText(); 
   };
 
   return (
@@ -25,31 +34,30 @@ const Search = ({navigation}) => {
                 style={styles.backButton}
               />
             </Pressable>
-            <Text style={styles.favourite}>Search for City</Text>
+            <TextInput
+              placeholder="Search for city"
+              value={text}
+              onChangeText={value => handleChange(value)}
+              style={styles.text}
+              placeholderTextColor="grey"
+            />
           </View>
           <View style={styles.rightHeader}>
-          <Pressable>
-            <Image
-              source={require('../assets/images/icon_clear.png')}
-              style={styles.clearButton}
-
-            />
-          </Pressable>
+            {text ? (
+              <TouchableOpacity onPress={handleClear}>
+                <Image source={icon} style={styles.clearButton} />
+              </TouchableOpacity>
+            ) : (
+              <></>
+            )}
+          </View>
         </View>
-        </View>
-
       </SafeAreaView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  //   container: {
-  //     flex: 1,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //     backgroundColor: '#2c3e50',
-  //   },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -80,20 +88,16 @@ const styles = StyleSheet.create({
     height: 16,
     width: 16,
   },
-  favourite: {
+  text: {
     height: 36,
-    opacity: 0.3,
-    color: '#000000',
+    color: 'black',
     fontSize: 14,
-    letterSpacing: 0,
-    lineHeight: 36,
     marginStart: 32,
   },
- clearButton: {
+  clearButton: {
     height: 14,
     width: 14,
-    opacity: 0.4,
-},
+  },
 });
 
 export default Search;

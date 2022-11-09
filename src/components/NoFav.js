@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
       },
       nofavText:{
         height: 21,
-        width: 166,
         color: '#FFFFFF',
         fontSize: 18,
         letterSpacing: 0,

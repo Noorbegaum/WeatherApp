@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,82 +10,92 @@ import {
   Pressable,
 } from 'react-native';
 import BottomScroll from '../components/BottomScroll';
-
+import Search from './Search';
 const image = require('../assets/images/background.png');
 
 const Home = ({navigation}) => {
+  const [search, setSearch] = useState(false);
   const handleDrawer = () => {
     navigation.openDrawer();
   };
   const handleSearch = () => {
-    navigation.navigate('Search');
+    setSearch(!search)
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-        <SafeAreaView style={styles.safeView}>
-          <View style={styles.header}>
-            <View style={styles.headerMenu}>
-              <Pressable onPress={handleDrawer}>
-                <Image
-                  source={require('../assets/images/burgerMenu.png')}
-                  style={styles.menu}
-                />
-              </Pressable>
-              <Image
-                source={require('../assets/images/logo.png')}
-                style={styles.logo}
-              />
-            </View>
-            <View style={styles.headerMenu}>
-              <Pressable onPress={handleSearch}>
-                <Image
-                  source={require('../assets/images/search.png')}
-                  style={styles.search}
-                />
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={{height: '73%'}}>
-            <ScrollView>
-              <View style={styles.weatherReport}>
-                <Text style={styles.timeline}>
-                  {' '}
-                  {`WED, 28 NOV 2018    11:35 AM`}
-                </Text>
-                <Text style={styles.city}>Udupi, Karnataka</Text>
-                <View style={styles.fav}>
+    <>
+      {!search ? (
+        <View style={styles.container}>
+          <ImageBackground
+            source={image}
+            resizeMode="cover"
+            style={styles.image}>
+            <SafeAreaView style={styles.safeView}>
+              <View style={styles.header}>
+                <View style={styles.headerMenu}>
+                  <Pressable onPress={handleDrawer}>
+                    <Image
+                      source={require('../assets/images/burgerMenu.png')}
+                      style={styles.menu}
+                    />
+                  </Pressable>
                   <Image
-                    source={require('../assets/images/icon_favourite.png')}
-                    style={styles.search}
+                    source={require('../assets/images/logo.png')}
+                    style={styles.logo}
                   />
-                  <Text style={styles.favText}>Add to favourite</Text>
+                </View>
+                <View style={styles.headerMenu}>
+                  <Pressable onPress={handleSearch}>
+                    <Image
+                      source={require('../assets/images/search.png')}
+                      style={styles.search}
+                    />
+                  </Pressable>
                 </View>
               </View>
 
-              <View style={styles.middleView}>
-                <Image
-                  source={require('../assets/images/icon_mostly_sunny_small.png')}
-                  style={styles.symbol}
-                />
-                <View style={styles.tempGroup}>
-                  <Text style={styles.actualTemp}>31</Text>
-                  <View style={styles.unitGroup}>
-                    <Text style={styles.celcius}>°C</Text>
-                    <Text style={styles.faranheit}>°F</Text>
+              <View style={{height: '73%'}}>
+                <ScrollView>
+                  <View style={styles.weatherReport}>
+                    <Text style={styles.timeline}>
+                      {' '}
+                      {`WED, 28 NOV 2018    11:35 AM`}
+                    </Text>
+                    <Text style={styles.city}>Udupi, Karnataka</Text>
+                    <View style={styles.fav}>
+                      <Image
+                        source={require('../assets/images/icon_favourite.png')}
+                        style={styles.search}
+                      />
+                      <Text style={styles.favText}>Add to favourite</Text>
+                    </View>
                   </View>
-                </View>
-                <Text style={styles.mostlySunny}>Mostly Sunny</Text>
-              </View>
-            </ScrollView>
-          </View>
 
-          <BottomScroll />
-        </SafeAreaView>
-      </ImageBackground>
-    </View>
+                  <View style={styles.middleView}>
+                    <Image
+                      source={require('../assets/images/icon_mostly_sunny_small.png')}
+                      style={styles.symbol}
+                    />
+                    <View style={styles.tempGroup}>
+                      <Text style={styles.actualTemp}>31</Text>
+                      <View style={styles.unitGroup}>
+                        <Text style={styles.celcius}>°C</Text>
+                        <Text style={styles.faranheit}>°F</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.mostlySunny}>Mostly Sunny</Text>
+                  </View>
+                </ScrollView>
+              </View>
+
+              <BottomScroll />
+            </SafeAreaView>
+          </ImageBackground>
+        </View>
+      ) : (
+        <Search setSearch={setSearch} search={search}/>
+      )}
+    </>
   );
 };
 

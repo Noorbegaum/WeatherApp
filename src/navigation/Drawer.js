@@ -37,13 +37,6 @@ function MyDrawer() {
           }}
         />
       </Drawer.Navigator>
-      {/* <Stack.Navigator>
-        <Stack.Screen
-          name="Search"
-          component={Search}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator> */}
       </NavigationContainer>
       </>
     
