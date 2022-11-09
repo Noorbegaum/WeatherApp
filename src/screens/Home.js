@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,16 +11,65 @@ import {
 } from 'react-native';
 import BottomScroll from '../components/BottomScroll';
 import Search from './Search';
+import {useDispatch, useSelector} from 'react-redux';
+import {getData} from '../redux/WeatherSlice';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import moment from 'moment';
+import { addCity } from '../redux/OperationSlice';
+import uuid from 'react-native-uuid';
+
+
 const image = require('../assets/images/background.png');
+const source = require('../assets/images/icon_mostly_sunny_small.png');
 
 const Home = ({navigation}) => {
   const [search, setSearch] = useState(false);
+  const list = useSelector(state => state.favourites.list);
+  
+  const [celcius, setCelsius] = useState(list.current.temp_c);
+  
+  const [date, setDate] = useState('');
+  const currentDateTime = () => {
+    const dateTimeMoment = moment()
+      .utcOffset('+05:30')
+      .format('ddd, DD MMM YY     hh:mm a')
+      .toUpperCase();
+    setDate(dateTimeMoment);
+  };
+
+  useEffect(() => {
+    currentDateTime();
+  }, []);
+
+  const dispatch = useDispatch();
+  // useEffect(()=>{
+  //   dispatch(getData())
+  // },[dispatch])
+
   const handleDrawer = () => {
     navigation.openDrawer();
   };
   const handleSearch = () => {
-    setSearch(!search)
+    setSearch(!search);
   };
+  const handleFaranheit = () => {
+    setCelsius(list.current.temp_f);
+  };
+  const handleCelcius = () => {
+    setCelsius(list.current.temp_c);
+  };
+  const obj={
+    id:list.location.name,
+    city:list.location.name,
+    source:source,
+    temperature:celcius,
+    description:list.current.condition.text
+  }
+  console.log(obj)
+  const handlePress = () =>{
+    dispatch(getData())
+    dispatch(addCity(obj))
+  }
 
   return (
     <>
@@ -57,16 +106,17 @@ const Home = ({navigation}) => {
               <View style={{height: '73%'}}>
                 <ScrollView>
                   <View style={styles.weatherReport}>
-                    <Text style={styles.timeline}>
-                      {' '}
-                      {`WED, 28 NOV 2018    11:35 AM`}
+                    <Text style={styles.timeline}> {date}</Text>
+                    <Text style={styles.city}>
+                      {list.location.name}, {list.location.region}
                     </Text>
-                    <Text style={styles.city}>Udupi, Karnataka</Text>
                     <View style={styles.fav}>
-                      <Image
-                        source={require('../assets/images/icon_favourite.png')}
-                        style={styles.search}
-                      />
+                      <TouchableOpacity onPress={handlePress}>
+                        <Image
+                          source={require('../assets/images/icon_favourite.png')}
+                          style={styles.search}
+                        />
+                      </TouchableOpacity>
                       <Text style={styles.favText}>Add to favourite</Text>
                     </View>
                   </View>
@@ -77,13 +127,35 @@ const Home = ({navigation}) => {
                       style={styles.symbol}
                     />
                     <View style={styles.tempGroup}>
-                      <Text style={styles.actualTemp}>31</Text>
+                      <Text style={styles.actualTemp}>
+                        {celcius}
+                        </Text>
                       <View style={styles.unitGroup}>
-                        <Text style={styles.celcius}>°C</Text>
-                        <Text style={styles.faranheit}>°F</Text>
+                        {celcius == list.current.temp_c ? (
+                          <>
+                            <TouchableOpacity onPress={handleCelcius}>
+                              <Text style={styles.celcius}>°C</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleFaranheit}>
+                              <Text style={styles.faranheit}>°F</Text>
+                            </TouchableOpacity>
+                          </>
+                        ) : (
+                          <>
+                            <TouchableOpacity onPress={handleCelcius}>
+                              <Text style={styles.faranheit}>°C</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleFaranheit}>
+                              <Text style={styles.celcius}>°F</Text>
+                            </TouchableOpacity>
+                          </>
+                        )}
                       </View>
                     </View>
-                    <Text style={styles.mostlySunny}>Mostly Sunny</Text>
+                    <Text style={styles.mostlySunny}>
+                      Mostly 
+                      {list.current.condition.text}
+                    </Text>
                   </View>
                 </ScrollView>
               </View>
@@ -93,7 +165,7 @@ const Home = ({navigation}) => {
           </ImageBackground>
         </View>
       ) : (
-        <Search setSearch={setSearch} search={search}/>
+        <Search setSearch={setSearch} search={search} />
       )}
     </>
   );
@@ -252,7 +324,6 @@ const styles = StyleSheet.create({
     marginTop: 11,
   },
   actualTemp: {
-    width: 60,
     color: '#FFFFFF',
     fontSize: 52,
     fontWeight: '500',

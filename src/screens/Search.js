@@ -12,6 +12,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 const Search = ({setSearch, search}) => {
   const [icon, setIcon] = useState(null);
   const [text, setText] = useState();
+
   const handleBack = () => {
     setSearch(!search);
   };

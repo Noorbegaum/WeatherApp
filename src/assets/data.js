@@ -1,42 +1,49 @@
+// import { DisplayData } from '../services/WeatherApi';
+// const display = async () =>{
+//   const response = await DisplayData();
+//   console.log("hiiiiii",response.location)
+// }
+// {display()}
+
 
 const Data = [
         {
-          id: 1,
+          id: 'Udupi,Karnataka',
           city: 'Udupi,Karnataka',
           source: require('../assets/images/icon_mostly_sunny_small.png'),
           temperature: 31,
           description: 'Mostly Sunny',
         },
         {
-          id: 2,
+          id: 'Bengaluru, Karnataka',
           city: 'Bengaluru, Karnataka',
           source: require('../assets/images/icon_rain_small.png'),
           temperature: 29,
           description: 'Rain',
         },
         {
-          id: 3,
+          id: 'Mumbai, Maharashtra',
           city: 'Mumbai, Maharashtra',
           source: require('../assets/images/icon_mostly_cloudy_small.png'),
           temperature: 32,
           description: 'Mostly Cloudy',
         },
         {
-          id: 4,
+          id: 'Kolkatta, West Bengal',
           city: 'Kolkatta, West Bengal',
           source: require('../assets/images/icon_partly_cloudy_small.png'),
           temperature: 30,
           description: 'Partly Cloudy',
         },
         {
-          id: 5,
+          id: 'Panaji, Goa',
           city: 'Panaji, Goa',
           source: require('../assets/images/icon_thunderstorm_small.png'),
           temperature: 31,
           description: 'Thunderstorm',
         },
         {
-          id: 6,
+          id: 'Newyork, United States',
           city: 'Newyork, United States',
           source: require('../assets/images/icon_clear_night_small.png'),
           temperature: 24,

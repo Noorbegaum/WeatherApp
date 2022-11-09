@@ -7,23 +7,32 @@ import {
   Image,
   FlatList,
   Alert,
+  Pressable,
 } from 'react-native';
 import NoFav from './NoFav';
 import { useSelector } from 'react-redux';
 
-
+import { useDispatch } from 'react-redux';
+import { deleteCity } from '../redux/OperationSlice';
 
 const CityList = () => {
+  const dispatch= useDispatch();
+  const data = useSelector(state=>state.operations.value)
 
-  const data = useSelector(state=>state.favourites.value)
   
   return (
    
         <View>
+          <Text></Text>
           <FlatList
             data={data}
+            keyExtractor={item => item.city}
             renderItem={({item}) => (
-              <View>
+              <Pressable  onLongPress={() => {
+                dispatch(deleteCity({id: item.city}));
+                // Toast.show(`Deleted ${item.city} Successfully`);
+              }}>
+{/* dispatch(deleteCity({id:item.city})) */}
                 <View style={styles.listItem}>
                   <View>
                     <Text style={styles.location}>{item.city}</Text>
@@ -41,9 +50,9 @@ const CityList = () => {
                     />
                   </View>
                 </View>
-              </View>
+             
+              </Pressable>
             )}
-            keyExtractor={item => item.id}
           />
         </View>
    
