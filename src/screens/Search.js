@@ -6,24 +6,58 @@ import {
   Pressable,
   Image,
   TextInput,
+  Text,
 } from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-
+import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+import { SearchApi } from '../services/SearchApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { getData } from '../redux/WeatherSlice';
+import { setFavourite } from '../redux/OperationSlice';
+import { addRecentCity } from '../redux/OperationSlice';
 const Search = ({setSearch, search}) => {
+  const list = useSelector(state => state.favourites.list);
+  const favourite = useSelector(state => state.operations.favourite);
+
   const [icon, setIcon] = useState(null);
   const [text, setText] = useState();
+  const [data,setData] = useState ()
+  
+  const [celcius, setCelsius] = useState(list.current?.temp_c);
+  const dispatch = useDispatch();
+  
+  const obj = {
+    id: list.location?.name,
+    city: list.location?.name,
+    region:list.location?.region,
+    source: {uri:`https:${list.current?.condition.icon}`},
+    temperature: celcius,
+    description: list.current?.condition.text,
+    favourite:favourite,
+  };
 
+ 
   const handleBack = () => {
     setSearch(!search);
   };
-  const handleChange = value => {
+  const handleChange = async  (value) => {
     setText(value)
     setIcon(require('../assets/images/icon_clear.png'));
+    const Data = await SearchApi(value)
+    setData(Data)
+    
   };
   const handleClear = () => {
     setText();
  
   };
+  const handleSearh = (item) =>{
+    setText(item.name)
+    dispatch(setFavourite(false))
+    setSearch(!search)
+    dispatch(getData(item.name))
+    dispatch(addRecentCity(obj))
+    console.log("I am Data",data);
+  }
 
   return (
     <View style={styles.container}>
@@ -53,6 +87,20 @@ const Search = ({setSearch, search}) => {
               <></>
             )}
           </View>
+        </View>
+        <View >
+          <FlatList
+        data={data}
+        renderItem={({item})=>(
+          (
+            <Pressable onPress={()=>handleSearh(item)}>
+           <View style={styles.header}>
+            <Text>{item.name}</Text>
+            </View>
+            </Pressable>
+          )
+        )}
+          />
         </View>
       </SafeAreaView>
     </View>

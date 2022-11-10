@@ -1,7 +1,9 @@
 import {View, Text, ScrollView, Image, StyleSheet} from 'react-native';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const BottomScroll = () => {
+  const list = useSelector(state => state.favourites.list);
   return (
     <View style={styles.detailView}>
       <ScrollView horizontal={true}>
@@ -27,7 +29,7 @@ const BottomScroll = () => {
               />
               <View>
                 <Text style={styles.minmax}>Precipitation</Text>
-                <Text style={styles.tempNumber}>0%</Text>
+                <Text style={styles.tempNumber}>{list.current?.precip_in}%</Text>
               </View>
             </View>
           </View>
@@ -40,7 +42,7 @@ const BottomScroll = () => {
               />
               <View>
                 <Text style={styles.minmax}>Humidity</Text>
-                <Text style={styles.tempNumber}>47%</Text>
+                <Text style={styles.tempNumber}>{list.current?.humidity}%</Text>
               </View>
             </View>
           </View>

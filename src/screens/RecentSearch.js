@@ -12,10 +12,13 @@ import React, {useState} from 'react';
 import NoFav from '../components/NoFav';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import CityList from '../components/CityList';
-
+import RecentList from '../components/RecentList';
+import { clearAll } from '../redux/OperationSlice';
+import { useDispatch } from 'react-redux';
 const image = require('../assets/images/background.png');
 
 const RecentSearch = ({navigation}) => {
+  const dispatch=useDispatch()
   const [remove, setRemove] = useState(false);
   const handleBack = () => {
     navigation.navigate('HomeScreen');
@@ -26,7 +29,10 @@ const RecentSearch = ({navigation}) => {
         text: 'NO',
         onPress: () => console.log('No Pressed'),
       },
-      {text: 'YES', onPress: () => setRemove(!remove)},
+      {text: 'YES', onPress: () => {
+        dispatch(clearAll())
+        setRemove(!remove)
+      }},
     ]);
   return (
     <>
@@ -63,7 +69,7 @@ const RecentSearch = ({navigation}) => {
                 <Text style={styles.removeAll}>Clear All</Text>
               </TouchableOpacity>
             </View>
-            <CityList />
+            <RecentList navigation={navigation}/>
           </>
            
           ) : (

@@ -3,7 +3,7 @@ import Data from '../assets/data';
 
 const BASE_URL = 'https://weatherapi-com.p.rapidapi.com/';
 
-export const getData = createAsyncThunk('weatherdata/getData', async () => {
+export const getData = createAsyncThunk('weatherdata/getData', async (city) => {
   const options = {
     method: 'GET',
     headers: {
@@ -11,7 +11,7 @@ export const getData = createAsyncThunk('weatherdata/getData', async () => {
       'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com',
     },
   };
-  const response = await fetch(BASE_URL + 'current.json?q=Mysore', options)
+  const response = await fetch(BASE_URL + `current.json?q=${city}`, options)
   try {
     const data = response.json();
     return data;
@@ -26,11 +26,7 @@ export const WeatherSlice = createSlice({
     list: [],
     status: null,
   },
-  reducers:{
-    add: (state, action) => {
-        state.list.push(action.payload);
-      },
-  },
+
   extraReducers: {
     [getData.pending]: (state, action) => {
       state.status = 'loading';

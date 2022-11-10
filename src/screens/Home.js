@@ -12,23 +12,23 @@ import {
 import BottomScroll from '../components/BottomScroll';
 import Search from './Search';
 import {useDispatch, useSelector} from 'react-redux';
-import {getData} from '../redux/WeatherSlice';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import moment from 'moment';
-import { addCity } from '../redux/OperationSlice';
-import uuid from 'react-native-uuid';
-
-
+import {addCity, setFavourite} from '../redux/OperationSlice';
+import {deleteCity} from '../redux/OperationSlice';
 const image = require('../assets/images/background.png');
-const source = require('../assets/images/icon_mostly_sunny_small.png');
+
 
 const Home = ({navigation}) => {
+  const dispatch = useDispatch();
   const [search, setSearch] = useState(false);
   const list = useSelector(state => state.favourites.list);
-  
-  const [celcius, setCelsius] = useState(list.current.temp_c);
-  
+  const [celcius, setCelsius] = useState(list.current?.temp_c);
+
+  const favourite = useSelector(state => state.operations.favourite);
+  console.log('I am fav', favourite);
   const [date, setDate] = useState('');
+
   const currentDateTime = () => {
     const dateTimeMoment = moment()
       .utcOffset('+05:30')
@@ -39,12 +39,14 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     currentDateTime();
+    setCelsius(list.current?.temp_c);
   }, []);
 
-  const dispatch = useDispatch();
   // useEffect(()=>{
   //   dispatch(getData())
   // },[dispatch])
+
+  
 
   const handleDrawer = () => {
     navigation.openDrawer();
@@ -53,23 +55,29 @@ const Home = ({navigation}) => {
     setSearch(!search);
   };
   const handleFaranheit = () => {
-    setCelsius(list.current.temp_f);
+    setCelsius(list.current?.temp_f);
   };
   const handleCelcius = () => {
-    setCelsius(list.current.temp_c);
+    setCelsius(list.current?.temp_c);
   };
-  const obj={
-    id:list.location.name,
-    city:list.location.name,
-    source:source,
-    temperature:celcius,
-    description:list.current.condition.text
-  }
-  console.log(obj)
-  const handlePress = () =>{
-    dispatch(getData())
-    dispatch(addCity(obj))
-  }
+  const obj = {
+    id: list.location?.name,
+    city: list.location?.name,
+    region:list.location?.region,
+    source: {uri:`https:${list.current?.condition.icon}`},
+    temperature: celcius,
+    description: list.current?.condition.text,
+  };
+  console.log(obj);
+  const handlePress = () => {
+    if (!favourite) {
+      dispatch(setFavourite(true));
+      dispatch(addCity(obj));
+    } else {
+      dispatch(setFavourite(false));
+      dispatch(deleteCity(obj));
+    }
+  };
 
   return (
     <>
@@ -108,30 +116,41 @@ const Home = ({navigation}) => {
                   <View style={styles.weatherReport}>
                     <Text style={styles.timeline}> {date}</Text>
                     <Text style={styles.city}>
-                      {list.location.name}, {list.location.region}
+                      {list.location?.name}, {list.location?.region}
                     </Text>
                     <View style={styles.fav}>
-                      <TouchableOpacity onPress={handlePress}>
-                        <Image
-                          source={require('../assets/images/icon_favourite.png')}
-                          style={styles.search}
-                        />
-                      </TouchableOpacity>
+                      {favourite
+                        ? 
+                          (
+                            <TouchableOpacity onPress={handlePress}>
+                              <Image
+                                source={require('../assets/images/icon_favourite_active.png')}
+                                style={styles.favbutton}
+                              />
+                            </TouchableOpacity>
+                          )
+                        : 
+                          (
+                            <TouchableOpacity onPress={handlePress}>
+                              <Image
+                                source={require('../assets/images/icon_favourite.png')}
+                                style={styles.favbutton}
+                              />
+                            </TouchableOpacity>
+                          )}
                       <Text style={styles.favText}>Add to favourite</Text>
                     </View>
                   </View>
 
                   <View style={styles.middleView}>
                     <Image
-                      source={require('../assets/images/icon_mostly_sunny_small.png')}
+                      source={{uri:`https:${list.current?.condition.icon}`}}
                       style={styles.symbol}
                     />
                     <View style={styles.tempGroup}>
-                      <Text style={styles.actualTemp}>
-                        {celcius}
-                        </Text>
+                      <Text style={styles.actualTemp}>{celcius}</Text>
                       <View style={styles.unitGroup}>
-                        {celcius == list.current.temp_c ? (
+                        {celcius == list.current?.temp_c ? (
                           <>
                             <TouchableOpacity onPress={handleCelcius}>
                               <Text style={styles.celcius}>°C</Text>
@@ -153,8 +172,7 @@ const Home = ({navigation}) => {
                       </View>
                     </View>
                     <Text style={styles.mostlySunny}>
-                      Mostly 
-                      {list.current.condition.text}
+                      {list.current?.condition.text}
                     </Text>
                   </View>
                 </ScrollView>
@@ -207,6 +225,10 @@ const styles = StyleSheet.create({
   search: {
     height: 17.49,
     width: 17.49,
+  },
+  favbutton: {
+    height: 16.97,
+    width: 18,
   },
   weatherReport: {
     alignItems: 'center',
@@ -304,8 +326,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   symbol: {
-    height: 67,
-    width: 64,
+    height: 90,
+    width: 100,
     marginBottom: 15,
   },
   tempGroup: {
@@ -315,7 +337,6 @@ const styles = StyleSheet.create({
   },
   mostlySunny: {
     height: 21,
-    width: 108,
     color: '#FFFFFF',
     fontSize: 18,
     letterSpacing: 0,

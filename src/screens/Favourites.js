@@ -8,15 +8,21 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import NoFav from '../components/NoFav';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import CityList from '../components/CityList';
-
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { removeAll } from '../redux/OperationSlice';
+import { addCity } from '../redux/OperationSlice';
 const image = require('../assets/images/background.png');
 
 const Favourites = ({navigation}, props) => {
+  const dispatch=useDispatch();
   const [remove, setRemove] = useState(false);
+  const favourite = useSelector(state => state.operations.value);
+  console.log("I am list length",favourite.length)
   const handleBack = () => {
     navigation.goBack('HomeScreen');
   };
@@ -26,8 +32,16 @@ const Favourites = ({navigation}, props) => {
         text: 'NO',
         onPress: () => console.log('No Pressed'),
       },
-      {text: 'YES', onPress: () => setRemove(!remove)},
+      {text: 'YES', onPress: () => {
+        dispatch(removeAll())
+        setRemove(!remove)
+      },
+    }
     ]);
+
+    // useEffect(()=>{
+    //   dispatch(addCity())
+    // },[])
 
   return (
     <View style={styles.container}>
@@ -46,7 +60,7 @@ const Favourites = ({navigation}, props) => {
             </View>
 
             <View style={styles.rightHeader}>
-              <Pressable>
+              <Pressable >
                 <Image
                   source={require('../assets/images/search.png')}
                   style={styles.searchButton}
@@ -58,12 +72,12 @@ const Favourites = ({navigation}, props) => {
           {!remove ? (
             <>
             <View style={styles.content}>
-              <Text style={styles.addedText}>6 City added as favourite</Text>
+              <Text style={styles.addedText}>{favourite.length} City added as favourite</Text>
               <TouchableOpacity onPress={createTwoButtonAlert}>
                 <Text style={styles.removeAll}>Remove All</Text>
               </TouchableOpacity>
             </View>
-            <CityList />
+            <CityList navigation={navigation}/>
           </>
            
           ) : (
